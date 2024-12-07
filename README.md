@@ -136,7 +136,8 @@ Generated note should contain:
 
 # Architecture design of the system under development
 
-<img src='./docs/images/block.png' alt='alt' style="width:90%; height:auto;"/>
+<img src='./docs/images/system-process-flow.png' style="width:100%; height:auto;"/>
+<img src='./docs/images/system-sequence-diagram.png' style="width:100%; height:auto;"/>
 
 # Implementation and work schema
 
