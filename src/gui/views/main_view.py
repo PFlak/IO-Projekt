@@ -6,8 +6,7 @@ import os
 class MainView(BaseView):
     def __init__(self):
         super().__init__("Widok główny")
-        main_layout = self.layout
-        
+
         # Create a top section for left-right split
         top_layout = QHBoxLayout()
         
@@ -78,11 +77,8 @@ class MainView(BaseView):
         top_layout.addLayout(left_layout)
         top_layout.addWidget(self.create_line(QFrame.VLine))
         top_layout.addLayout(right_layout)
-        main_layout.addLayout(top_layout)
-        main_layout.addLayout(bottom_layout)
-
-        # Set main layout for the view
-        self.setLayout(main_layout)
+        self.layout.addLayout(top_layout)
+        self.layout.addLayout(bottom_layout)
 
     def toggle_auto(self):
         self.meeting_title.setDisabled(self.meeting_title_checkbox.isChecked())
