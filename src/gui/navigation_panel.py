@@ -25,6 +25,7 @@ class NavigationPanel(QWidget):
         self.settings_button = self.create_button(settings_icon)
 
         # Add buttons to layout
+        self.layout.addStretch()
         self.layout.addWidget(self.main_button)
         self.layout.addWidget(self.notes_button)
         self.layout.addWidget(self.calendar_button)
@@ -34,8 +35,8 @@ class NavigationPanel(QWidget):
     def create_button(self, icon_path):
         button = QPushButton()
         button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        button.setMinimumSize(70, 70)
-        button.setMaximumSize(70, 70)
+        button.setMinimumSize(50, 50)
+        button.setMaximumSize(50, 50)
         button.setIcon(QIcon(icon_path))
-        button.setIconSize(QSize(60, 60))
+        button.setIconSize(QSize(30, 30))
         return button

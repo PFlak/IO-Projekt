@@ -1,18 +1,25 @@
 from PySide6.QtWidgets import QMainWindow, QHBoxLayout, QWidget, QStackedWidget
+from PySide6.QtGui import QGuiApplication, QIcon
 from src.gui.navigation_panel import NavigationPanel
 from src.gui.views.calendar_view import CalendarView
 from src.gui.views.main_view import MainView
 from src.gui.views.notes_view import NotesView
 from src.gui.views.settings_view import SettingsView
 from src.utils.logger import app_logger
+from src.config import ICON_DIRECTORY
+import os
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         app_logger.info("Initializing MainWindow")
-        self.setWindowTitle("SmartNotesApp")
-        self.resize(800, 600)
+        
+        # Set title, icon, size and position
+        self.setWindowTitle("Smart Notes App")
+        self.setWindowIcon(QIcon(os.path.join(ICON_DIRECTORY, 'app.ico')))
+        screen = QGuiApplication.primaryScreen().availableGeometry()
+        self.setGeometry(screen.width() // 4, screen.height() // 4, screen.width() // 2, screen.height() // 2)
 
         # Central widget
         self.central_widget = QWidget()

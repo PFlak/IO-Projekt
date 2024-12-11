@@ -1,9 +1,6 @@
-from PySide6.QtWidgets import QLabel, QWidget, QVBoxLayout
+from src.gui.views.base_view import BaseView
 
 
-class CalendarView(QWidget):
+class CalendarView(BaseView):
     def __init__(self):
-        super().__init__()
-        layout = QVBoxLayout(self)
-        label = QLabel("Widok Kalendarza")
-        layout.addWidget(label)
+        super().__init__("Kalendarz")

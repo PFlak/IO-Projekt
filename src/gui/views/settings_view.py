@@ -1,9 +1,8 @@
-from PySide6.QtWidgets import QLabel, QWidget, QVBoxLayout
+from src.gui.views.base_view import BaseView
 
 
-class SettingsView(QWidget):
+class SettingsView(BaseView):
     def __init__(self):
-        super().__init__()
-        layout = QVBoxLayout(self)
-        label = QLabel("Widok Ustawień")
-        layout.addWidget(label)
+        super().__init__("Ustawienia")
+        main_layout = self.layout
+        self.setLayout(main_layout)
