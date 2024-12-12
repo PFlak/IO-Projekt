@@ -107,17 +107,19 @@ The application aims to create accessible notes and summaries from meetings on p
         background-color: #bbbbbc;
         border-radius: 2px;
         color: white;
-        padding: 2% 2%;
+        padding: 5% 5%;
     }
 
     .note.image {
-        width: 94%;
+        width: 100%;
         aspect-ratio: 2;
         background-color: #d8d8d9;
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-bottom: 5px;
+        margin-top: 5px;
     }
 
     img {
