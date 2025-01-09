@@ -138,8 +138,23 @@ Generated note should contain:
 
 # Architecture design of the system under development
 
-<img src='./docs/images/system-process-flow.png' style="width:100%; height:auto;"/>
-<img src='./docs/images/system-sequence-diagram.png' style="width:100%; height:auto;"/>
+<div class='diagrams'>
+    <img src='./docs/images/system-process-flow.png' style="width: 100%;"/>
+    <br></br>
+    <img src='./docs/images/system-sequence-diagram.png' style="width: 70%;"/>
+</div>
+
+<style>
+    .diagrams {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    img {
+        height: auto;
+    }
+</style>
 
 # Implementation and work schema
 
