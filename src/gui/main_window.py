@@ -6,7 +6,7 @@ from src.gui.views.main_view import MainView
 from src.gui.views.notes_view import NotesView
 from src.gui.views.settings_view import SettingsView
 from src.utils.logger import app_logger
-from src.config import ICON_DIRECTORY
+from src.config import ICON_DIRECTORY, APP_NAME
 import os
 
 
@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         app_logger.info("Initializing MainWindow")
         
         # Set title, icon, size and position
-        self.setWindowTitle("Smart Notes App")
+        self.setWindowTitle(APP_NAME)
         self.setWindowIcon(QIcon(os.path.join(ICON_DIRECTORY, 'app.ico')))
         screen = QGuiApplication.primaryScreen().availableGeometry()
         self.setGeometry(screen.width() // 4, screen.height() // 4, screen.width() // 2, screen.height() // 2)

@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime
-from src.config import LOG_DIRECTORY
+from src.config import LOG_DIRECTORY, APP_NAME
 
 LOG_FILE = os.path.join(LOG_DIRECTORY, f'application_{datetime.now().strftime("%Y-%m-%d")}.log')
 
@@ -32,4 +32,4 @@ def setup_logger(name: str, log_file: str = LOG_FILE, level: int = logging.INFO)
 
 
 # Main application logger
-app_logger = setup_logger('SmartNotesApp')
+app_logger = setup_logger(APP_NAME)

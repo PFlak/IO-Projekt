@@ -15,7 +15,9 @@ SETTINGS_FILE = os.path.join(SRC_DIR, 'settings.json')
 # Default settings
 DEFAULT_SETTINGS = {
     "data_directory": os.path.join(BASE_DIR, 'data'),
-    "iframe_code": ""
+    "iframe_code": "",
+    "model_size": "small",
+    "transcription_language": "pl",
 }
 
 # Ensure settings file exists with default settings

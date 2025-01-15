@@ -1,14 +1,19 @@
 import whisper
 import os
 from src.utils.logger import app_logger
+from src.config import settings
 
 
 class SpeechToText:
-    def __init__(self, model_size='base'):
+    def __init__(self):
+        model_size = settings.get('model_size', 'small')
+        transcription_language = settings.get('transcription_language', 'pl')
+
         try:
             app_logger.info(f"Loading Whisper model: {model_size}")
             self.model = whisper.load_model(model_size)
-            app_logger.info("Whisper model loaded successfully.")
+            self.transcription_language = transcription_language
+            app_logger.info(f"Whisper model loaded successfully with language: {transcription_language}")
         except Exception as e:
             app_logger.error(f"Failed to load Whisper model: {e}")
             raise RuntimeError(f"Error loading Whisper model: {e}")
@@ -23,8 +28,8 @@ class SpeechToText:
             raise ValueError("Unsupported audio format. Supported formats: WAV, MP3, M4A, FLAC.")
 
         try:
-            app_logger.info(f"Starting transcription for: {audio_path}")
-            result = self.model.transcribe(audio_path)
+            app_logger.info(f"Starting transcription for: {audio_path} in language: {self.transcription_language}")
+            result = self.model.transcribe(audio_path, language=self.transcription_language)
             transcription = result.get("text", "")
             app_logger.info("Transcription completed successfully.")
             return transcription
