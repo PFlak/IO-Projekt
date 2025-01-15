@@ -18,6 +18,7 @@ DEFAULT_SETTINGS = {
     "iframe_code": "",
     "model_size": "small",
     "transcription_language": "pl",
+    "max_data_size_gb": 5,
 }
 
 # Ensure settings file exists with default settings
