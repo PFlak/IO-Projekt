@@ -12,7 +12,8 @@ class BaseView(QWidget):
 
         # Label
         label = QLabel(title, font=QFont("Consolas", 20))
-        self.layout.addWidget(label, alignment=Qt.AlignHCenter)
+        label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        self.layout.addWidget(label)
 
         # Font
         self.setFont(QFont("Consolas", 10))

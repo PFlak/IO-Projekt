@@ -15,7 +15,7 @@ SETTINGS_FILE = os.path.join(SRC_DIR, 'settings.json')
 # Default settings
 DEFAULT_SETTINGS = {
     "data_directory": os.path.join(BASE_DIR, 'data'),
-    "iframe_code": "",
+    "calendar_url": "",
     "model_size": "small",
     "transcription_language": "pl",
     "max_data_size_gb": 5,
