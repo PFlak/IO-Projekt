@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QHBoxLayout, QWidget, QStackedWidget
+from PySide6.QtWidgets import QMainWindow, QHBoxLayout, QWidget, QStackedWidget, QFrame
 from PySide6.QtGui import QGuiApplication, QIcon
 from src.gui.navigation_panel import NavigationPanel
 from src.gui.views.calendar_view import CalendarView
@@ -49,8 +49,14 @@ class MainWindow(QMainWindow):
         self.navigation_panel.calendar_button.clicked.connect(lambda: self.switch_view(self.calendar_view))
         self.navigation_panel.settings_button.clicked.connect(lambda: self.switch_view(self.settings_view))
 
-        # Add navigation panel and content area to the layout
+        # Separator line between navigation panel and content area
+        self.separator_line = QFrame()
+        self.separator_line.setFrameShape(QFrame.VLine)
+        self.separator_line.setFrameShadow(QFrame.Sunken)
+
+        # Add navigation panel, separator line, and content area to the layout
         self.layout.addWidget(self.navigation_panel)
+        self.layout.addWidget(self.separator_line)
         self.layout.addWidget(self.content_area)
 
         # Show default view
