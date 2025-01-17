@@ -68,7 +68,7 @@ class SettingsView(BaseView):
         # Model Size
         model_layout = QVBoxLayout()
         model_layout.setSpacing(10)
-        model_label = QLabel("Speech-to-Text Model Size (Larger models are slower but more accurate):")
+        model_label = QLabel("Speech-to-Text Model Size (larger models are slower but more accurate):")
         self.model_combo = QComboBox()
         self.model_combo.addItems(["tiny", "base", "small", "medium", "large", "turbo"])
         self.model_combo.setCurrentText(settings.get("model_size", "small"))
