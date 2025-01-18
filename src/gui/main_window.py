@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QHBoxLayout, QWidget, QStackedWidget, QFrame
+from PySide6.QtWidgets import QMainWindow, QHBoxLayout, QWidget, QStackedWidget, QFrame, QMessageBox
 from PySide6.QtGui import QGuiApplication, QIcon
 from src.gui.navigation_panel import NavigationPanel
 from src.gui.views.calendar_view import CalendarView
@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         app_logger.info("Initializing MainWindow")
-        
+
         # Set title, icon, size and position
         self.setWindowTitle(APP_NAME)
         self.setWindowIcon(QIcon(os.path.join(ICON_DIRECTORY, 'app.ico')))
@@ -65,3 +65,16 @@ class MainWindow(QMainWindow):
     def switch_view(self, view):
         self.content_area.setCurrentWidget(view)
         app_logger.info(f"Switched to view: {view.__class__.__name__}")
+
+    def closeEvent(self, event):
+        if self.main_view.recording_panel.is_recording:
+            reply = QMessageBox.question(self, 'Recording in Progress',
+                                         'Recording is in progress. Do you want to stop and exit?',
+                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.main_view.recording_panel.stop_recording()
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.accept()
