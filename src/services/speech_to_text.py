@@ -5,7 +5,34 @@ from src.config import settings
 
 
 class SpeechToText:
+    """
+    A class for transcribing audio files to text using the Whisper model.
+
+    The class initializes a Whisper model for transcription and provides methods for
+    transcribing audio and saving the transcription.
+
+    Attributes
+    ----------
+    model : whisper.Model
+        The Whisper model instance used for transcription.
+    transcription_language : str
+        The language used for transcriptions, as specified in settings.
+
+    Methods
+    -------
+    transcribe_audio(audio_path)
+        Transcribes the given audio file to text.
+    save_transcription(transcription, output_path)
+        Saves the transcribed text to a file.
+    """
     def __init__(self):
+        """
+        Initializes the SpeechToText class by loading the Whisper model.
+
+        The model size and transcription language are fetched from the application settings.
+
+        :raises RuntimeError: If the Whisper model fails to load.
+        """
         model_size = settings.get('model_size', 'small')
         transcription_language = settings.get('transcription_language', 'pl')
 
@@ -19,6 +46,18 @@ class SpeechToText:
             raise RuntimeError(f"Error loading Whisper model: {e}")
 
     def transcribe_audio(self, audio_path):
+        """
+        Transcribes the given audio file to text.
+
+        :param audio_path: The path to the audio file to transcribe.
+        :type audio_path: str
+        :returns: The transcription of the audio file.
+        :rtype: str
+
+        :raises FileNotFoundError: If the specified audio file does not exist.
+        :raises ValueError: If the audio file format is not supported.
+        :raises RuntimeError: If an error occurs during transcription.
+        """
         if not os.path.isfile(audio_path):
             app_logger.error(f"Audio file not found: {audio_path}")
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
@@ -38,6 +77,16 @@ class SpeechToText:
             raise RuntimeError(f"Error during transcription: {e}")
 
     def save_transcription(self, transcription, output_path):
+        """
+        Saves the transcription to a specified file.
+
+        :param transcription: The transcription text to save.
+        :type transcription: str
+        :param output_path: The path to the file where the transcription will be saved.
+        :type output_path: str
+
+        :raises RuntimeError: If an error occurs while saving the transcription.
+        """
         try:
             with open(output_path, 'w', encoding='utf-8') as file:
                 file.write(transcription)
