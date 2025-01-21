@@ -19,6 +19,7 @@ DEFAULT_SETTINGS = {
     "model_size": "small",
     "transcription_language": "pl",
     "max_data_size_gb": 5,
+    "open_ai_api_key": ""
 }
 
 # Ensure settings file exists with default settings
