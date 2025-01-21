@@ -6,7 +6,41 @@ import os
 
 
 class NavigationPanel(QWidget):
+    """
+    A custom navigation panel widget with buttons for different sections of an application.
+
+    This panel provides navigation buttons with icons for "Home," "Notes," "Calendar,"
+    and "Settings." The layout is a vertical box layout (`QVBoxLayout`) that ensures
+    the buttons are spaced evenly.
+
+    Inherits from `QWidget`.
+
+    Attributes
+    ----------
+    layout : QVBoxLayout
+        The main layout of the panel, arranging buttons vertically.
+    main_button : QPushButton
+        Button for navigating to the "Home" section.
+    notes_button : QPushButton
+        Button for navigating to the "Notes" section.
+    calendar_button : QPushButton
+        Button for navigating to the "Calendar" section.
+    settings_button : QPushButton
+        Button for navigating to the "Settings" section.
+
+    Methods
+    -------
+    create_button(icon_path)
+        Creates a QPushButton with a specified icon.
+    """
+
     def __init__(self, parent=None):
+        """
+        Initializes the NavigationPanel widget.
+
+        :param parent: The parent widget of this panel. Defaults to None.
+        :type parent: QWidget, optional
+        """
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -33,6 +67,17 @@ class NavigationPanel(QWidget):
         self.layout.addStretch()
 
     def create_button(self, icon_path):
+        """
+        Creates a QPushButton with the specified icon.
+
+        The button has fixed dimensions of 50x50 pixels and displays the icon
+        with a size of 30x30 pixels.
+
+        :param icon_path: The path to the icon image for the button.
+        :type icon_path: str
+        :return: A QPushButton instance configured with the specified icon.
+        :rtype: QPushButton
+        """
         button = QPushButton()
         button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         button.setMinimumSize(50, 50)
