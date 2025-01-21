@@ -11,7 +11,53 @@ import os
 
 
 class MainWindow(QMainWindow):
+    """
+    Main application window for the user interface.
+
+    The MainWindow class is the central interface for the application. It includes a navigation panel,
+    content area with multiple views, and manages switching between those views. The window is configured
+    with a title, icon, and size based on the screen's available geometry.
+
+    Inherits from `QMainWindow`.
+
+    Attributes
+    ----------
+    central_widget : QWidget
+        The main central widget of the window.
+    layout : QHBoxLayout
+        The layout managing the navigation panel, separator line, and content area.
+    navigation_panel : NavigationPanel
+        The navigation panel on the left side of the window.
+    content_area : QStackedWidget
+        The content area displaying the main, notes, calendar, and settings views.
+    main_view : MainView
+        The main view displayed by the content area.
+    notes_view : NotesView
+        The notes view displayed by the content area.
+    calendar_view : CalendarView
+        The calendar view displayed by the content area.
+    settings_view : SettingsView
+        The settings view displayed by the content area.
+    separator_line : QFrame
+        A vertical line separating the navigation panel from the content area.
+
+    Methods
+    -------
+    switch_view(view)
+        Switches the current view in the content area.
+    closeEvent(event)
+        Handles the close event, ensuring any active recording is stopped before exiting.
+    """
+
     def __init__(self):
+        """
+        Initializes the MainWindow instance.
+
+        The initialization sets the window's title, icon, size, and position. It also creates and configures
+        the navigation panel, content area, and layout.
+
+        The navigation panel buttons are connected to their respective views in the content area.
+        """
         super().__init__()
         app_logger.info("Initializing MainWindow")
 
@@ -63,10 +109,24 @@ class MainWindow(QMainWindow):
         self.switch_view(self.main_view)
 
     def switch_view(self, view):
+        """
+        Switches the current view in the content area.
+
+        :param view: The view to display in the content area.
+        :type view: QWidget
+        """
         self.content_area.setCurrentWidget(view)
         app_logger.info(f"Switched to view: {view.__class__.__name__}")
 
     def closeEvent(self, event):
+        """
+        Handles the close event for the window.
+
+        If a recording is in progress, prompts the user to confirm whether to stop recording and exit the application.
+
+        :param event: The close event.
+        :type event: QCloseEvent
+        """
         if self.main_view.recording_panel.is_recording:
             reply = QMessageBox.question(self, 'Recording in Progress',
                                          'Recording is in progress. Do you want to stop and exit?',
