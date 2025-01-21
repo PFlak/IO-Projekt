@@ -13,11 +13,58 @@ from src.utils.logger import app_logger
 
 
 class SettingsView(BaseView):
+    """
+    A user interface view for managing application settings.
+
+    The SettingsView provides input fields, dropdowns, and buttons for configuring various application settings,
+    including data directory, maximum data folder size, calendar URL, speech-to-text model size, and transcription language.
+
+    Inherits from `BaseView`.
+
+    Attributes
+    ----------
+    data_dir_input : QLineEdit
+        Input field for specifying the data directory path.
+    max_size_spinbox : QSpinBox
+        Spin box for selecting the maximum size of the data directory (in GB).
+    calendar_url_input : QLineEdit
+        Input field for specifying the Google Calendar URL.
+    model_combo : QComboBox
+        Dropdown for selecting the speech-to-text model size.
+    language_combo : QComboBox
+        Dropdown for selecting the transcription language.
+
+    Methods
+    -------
+    _setup_ui()
+        Sets up the user interface components for the view.
+    _browse_data_directory()
+        Opens a file dialog to browse and select the data directory.
+    _validate_calendar_url(url)
+        Validates the provided Google Calendar URL format.
+    _save_settings()
+        Saves the updated settings and restarts the application.
+    _restart_application()
+        Restarts the application after saving settings.
+    """
+
     def __init__(self):
+        """
+        Initializes the SettingsView instance.
+
+        Sets the title of the view to "Settings" and configures the user interface by calling `_setup_ui`.
+        """
         super().__init__("Settings")
         self._setup_ui()
 
     def _setup_ui(self):
+        """
+        Configures the user interface components for the settings view.
+
+        Includes fields and buttons for setting data directory, maximum folder size, calendar URL,
+        speech-to-text model size, and transcription language. A save button is also provided to
+        save the changes and restart the application.
+        """
         main_layout = QVBoxLayout()
 
         # Centering the content
@@ -106,17 +153,35 @@ class SettingsView(BaseView):
         self.layout.addLayout(main_layout)
 
     def _browse_data_directory(self):
+        """
+        Opens a file dialog to select a data directory.
+
+        Updates the data directory input field with the selected path.
+        """
         folder = QFileDialog.getExistingDirectory(self, "Select Data Directory")
         if folder:
             self.data_dir_input.setText(folder)
 
     def _validate_calendar_url(self, url):
+        """
+        Validates the provided Google Calendar URL format.
+
+        :param url: The Google Calendar URL to validate.
+        :type url: str
+        :return: True if the URL is valid or empty; False otherwise.
+        :rtype: bool
+        """
         if not url:
             return True
         pattern = r'^https:\/\/calendar\.google\.com\/calendar\/embed\?.+'
         return re.match(pattern, url) is not None
 
     def _save_settings(self):
+        """
+        Saves the current settings and restarts the application.
+
+        Validates the Google Calendar URL, updates the settings, and initiates a restart if valid.
+        """
         calendar_url = self.calendar_url_input.text().strip()
         if not self._validate_calendar_url(calendar_url):
             QMessageBox.warning(self, "Invalid URL", "Please provide a valid Google Calendar URL.")
@@ -137,6 +202,9 @@ class SettingsView(BaseView):
         self._restart_application()
 
     def _restart_application(self):
+        """
+        Restarts the application after saving settings.
+        """
         app_logger.info("Restarting application...")
         python = sys.executable
         os.execl(python, python, *sys.argv)
