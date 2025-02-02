@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QVBoxLayout, QLabel, QComboBox, QPushButton, QWidget, QMessageBox
 from PySide6.QtCore import Qt, QTimer
-from pygetwindow import getAllTitles
 from src.managers.recorder_manager import RecorderManager
+from src.utils.visible_windows import get_visible_window_titles
 
 
 class RecordingPanel(QWidget):
@@ -87,6 +87,7 @@ class RecordingPanel(QWidget):
         self.window_selector = QComboBox()
         self.window_selector.addItems(self.get_window_titles())
         self.window_selector.setFixedWidth(300)
+        self.window_selector.setMaxVisibleItems(10)
         layout.addWidget(QLabel("Select Window to Record:"), alignment=Qt.AlignCenter)
         layout.addWidget(self.window_selector, alignment=Qt.AlignCenter)
 
@@ -104,16 +105,14 @@ class RecordingPanel(QWidget):
 
     def get_window_titles(self):
         """
-        Retrieves the titles of all currently open windows.
-
-        Filters out any empty titles and returns the remaining window titles sorted alphabetically.
+        Retrieves the titles of all currently visible windows.
 
         Returns
         -------
         list of str
-            Sorted list of window titles.
+            Sorted list of visible window titles.
         """
-        return sorted([title for title in getAllTitles() if title.strip()])
+        return get_visible_window_titles()
 
     def refresh_window_list(self):
         """
