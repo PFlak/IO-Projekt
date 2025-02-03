@@ -108,6 +108,15 @@ class NoteTaker:
         process.start()
         return process
     
+    def modify_notes(self, assistant_id, thread_id, notes_length='SHORT', callback=None):
+        api_key = self._client.api_key
+        process = multiprocessing.Process(
+            target=self._modify_notes_worker,
+            args=(api_key, assistant_id, thread_id, notes_length, callback)
+        )
+        process.start()
+        return process
+
     @staticmethod
     def _generate_notes_worker(api_key, assistant_id, thread_id, transcription, notes_length, callback):
         """
@@ -148,6 +157,44 @@ class NoteTaker:
             app_logger.error(f"Unexpected error: {e}")
             if callback:
                 callback(None)
+
+    @staticmethod
+    def _modify_notes_worker(api_key, assistant_id, thread_id, notes_length, callback):
+        if notes_length not in ['SHORT', 'MEDIUM', 'LONG']:
+            notes_length = 'SHORT'
+        
+        try:
+            client = OpenAI(api_key=api_key)
+            client.beta.threads.messages.create(thread_id=thread_id, role='user', content=f'Create {notes_length} summarization of meeting')
+            run = client.beta.threads.runs.create(assistant_id=assistant_id, thread_id=thread_id)
+            
+            while True:
+                run_status = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+                if run_status.status == 'completed':
+                    break
+                elif run_status.status in ['failed', 'cancelled']:
+                    app_logger.error(f"Run failed with status: {run_status.status}")
+                    if callback:
+                        callback(None)
+                    return
+                time.sleep(1)
+            
+            messages = client.beta.threads.messages.list(thread_id=thread_id)
+            for message in messages.data:
+                if callback:
+                    callback(f'{message.content[0].text.value}')
+                    return
+            if callback:
+                callback(None)
+        except OpenAIError as e:
+            app_logger.error(f"OpenAI API error: {e}")
+            if callback:
+                callback(None)
+        except Exception as e:
+            app_logger.error(f"Unexpected error: {e}")
+            if callback:
+                callback(None)
+
 
 if __name__ == "__main__":
     API_KEY = ''
