@@ -10,6 +10,31 @@ import threading
 from functools import partial
 
 class NoteManager:
+    """
+    NoteManager class that handles API key updates, workspace scanning, and note generation.
+
+    Attributes:
+        api_key (str): The API key for accessing the note-taking service.
+        ws_json_list (list): A list of workspace JSON objects.
+        api_key_queue (multiprocessing.Queue): Queue to send API key updates.
+        ws_json_queue (multiprocessing.Queue): Queue to send workspace JSON updates.
+        generate_notes_queue (multiprocessing.Queue): Queue to send note generation tasks.
+        __update_api_key_proc (multiprocessing.Process): Process to handle API key updates.
+        __scan_data_workspaces_proc (multiprocessing.Process): Process to handle workspace scanning.
+        listener_thread (threading.Thread): Thread to listen for updates from processes.
+
+    Methods:
+        __init__(): Initializes the NoteManager class.
+        __listen_for_updates(): Listens for updates from processes and handles them.
+        get_api_key_from_settings_worker(queue): Worker function to retrieve API key from settings file.
+        cb_get_api_key_from_settings(api_key): Callback function to handle API key updates.
+        scan_data_workspaces_worker(queue): Worker function to scan data workspaces.
+        cb_scan_data_workspaces(json): Callback function to handle workspace JSON updates.
+        generate_notes(ws_name): Generates notes for a specific workspace.
+        cb_save_notes(ws_name, note_type, notes): Callback function to save generated notes to a specific file.
+        compare_options(option1, option2): Compares two options dictionaries.
+        update_options(ws_name, key, value): Updates a specific key in the options.json file for a given workspace.
+    """
     def __init__(self):
         self.api_key = None
         self.ws_json_list = []
@@ -37,6 +62,9 @@ class NoteManager:
         self.listener_thread.start()
 
     def __listen_for_updates(self):
+        """
+        Listens for updates from processes and handles them.
+        """
         while True:
             if not self.api_key_queue.empty():
                 api_key = self.api_key_queue.get()
@@ -48,6 +76,12 @@ class NoteManager:
 
     @staticmethod
     def get_api_key_from_settings_worker(queue):
+        """
+        Worker function to retrieve API key from settings file.
+
+        Args:
+            queue (multiprocessing.Queue): Queue to send API key updates.
+        """
         while True:
             try:
                 with open(SETTINGS_FILE, 'r') as file:
@@ -59,6 +93,12 @@ class NoteManager:
                 time.sleep(2)
 
     def cb_get_api_key_from_settings(self, api_key: str):
+        """
+        Callback function to handle API key updates.
+
+        Args:
+            api_key (str): The new API key.
+        """
         if api_key == self.api_key:
             return
         self.api_key = api_key
@@ -66,6 +106,12 @@ class NoteManager:
 
     @staticmethod
     def scan_data_workspaces_worker(queue):
+        """
+        Worker function to scan data workspaces.
+
+        Args:
+            queue (multiprocessing.Queue): Queue to send workspace JSON updates.
+        """
         while True:
             try:
                 dir_list = os.listdir(DATA_DIRECTORY)
@@ -103,6 +149,13 @@ class NoteManager:
                 time.sleep(2)
 
     def cb_scan_data_workspaces(self, json):
+        """
+        Callback function to handle workspace JSON updates.
+
+        Args:
+            json (dict): The updated workspace JSON object.
+        """
+
         try:
             for i, ws in enumerate(self.ws_json_list):
                 if ws['ws_name'] != json['ws_name']:
@@ -121,6 +174,12 @@ class NoteManager:
             app_logger.error(f"NoteManager: Could not update ws list: {e}")
 
     def generate_notes(self, ws_name):
+        """
+        Generates notes for a specific workspace.
+
+        Args:
+            ws_name (str): The name of the workspace.
+        """
         for i, ws in enumerate(self.ws_json_list):
             if ws['ws_name'] != ws_name:
                 continue
@@ -163,10 +222,11 @@ class NoteManager:
     def cb_save_notes(ws_name, note_type: str, notes):
         """
         Callback function to save generated notes to a specific file.
-        
-        :param ws: Workspace dictionary containing paths.
-        :param notes: The generated notes to save.
-        :param note_type: The key for the specific note type to save ('note_short_path', 'note_medium_path', or 'note_long_path').
+
+        Args:
+            ws_name (str): The name of the workspace.
+            note_type (str): The type of notes to save ('short', 'medium', 'long').
+            notes (str): The generated notes content.
         """
         try:
 
@@ -182,6 +242,16 @@ class NoteManager:
 
     @staticmethod
     def compare_options(option1, option2):
+        """
+        Compares two options dictionaries.
+
+        Args:
+            option1 (dict): The first options dictionary.
+            option2 (dict): The second options dictionary.
+
+        Returns:
+            bool: True if the dictionaries are identical, False otherwise.
+        """
         for key, value in option2.items():
             if option1[key] != value:
                 return False
@@ -190,11 +260,12 @@ class NoteManager:
     @staticmethod
     def update_options(ws_name, key, value):
         """
-        Update a specific key in the options.json file for the given workspace.
+        Updates a specific key in the options.json file for a given workspace.
 
-        :param ws_name: Name of the workspace
-        :param key: The key to update in options.json
-        :param value: The new value for the key
+        Args:
+            ws_name (str): The name of the workspace.
+            key (str): The key to update in options.json.
+            value (str): The new value for the key.
         """
         option_path = os.path.join(DATA_DIRECTORY, ws_name, 'options.json')
 
