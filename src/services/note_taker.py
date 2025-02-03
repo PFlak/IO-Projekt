@@ -194,15 +194,3 @@ class NoteTaker:
             app_logger.error(f"Unexpected error: {e}")
             if callback:
                 callback(None)
-
-
-if __name__ == "__main__":
-    API_KEY = ''
-    TRANSCRIPTION_PATH = ''
-    noteTaker = NoteTaker(API_KEY, format='MD')
-    ass_id = noteTaker.create_assistant(assistant_msg='You will be a note taker, who makes summarizations from transcriptions')
-    t_id = noteTaker.create_thread()
-    with open(TRANSCRIPTION_PATH, 'r') as transcription:
-        transcription_txt = '\n'.join(transcription.readlines())
-        proc = noteTaker.generate_notes(assistant_id=ass_id, thread_id=t_id, transcription=transcription_txt, callback=print)
-        proc.join()

@@ -289,8 +289,3 @@ class NoteManager:
 
         except Exception as e:
             app_logger.error(f"NoteManager: Failed to update options.json for '{ws_name}': {e}")
-
-if __name__ == '__main__':
-    nodeManager = NoteManager()
-    time.sleep(2)
-    nodeManager.generate_notes('sample_meeting')
