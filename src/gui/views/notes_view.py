@@ -41,12 +41,24 @@ class NotesView(BaseView):
         main_layout.addLayout(content_layout)
         self.layout.addLayout(main_layout)
 
+    def showEvent(self, event):
+        """
+        Called whenever the view is shown, ensuring the notes list is updated.
+        """
+        self.load_notes()
+        super().showEvent(event)
+
     def load_notes(self):
         """
         Loads and displays notes from the data directory.
         """
         if not os.path.exists(DATA_DIRECTORY):
             return
+
+        for i in reversed(range(self.notes_container.count())):
+            widget = self.notes_container.itemAt(i).widget()
+            if widget:
+                widget.deleteLater()
 
         folders = [f for f in os.listdir(DATA_DIRECTORY) if os.path.isdir(os.path.join(DATA_DIRECTORY, f))]
         for folder in sorted(folders, reverse=True):
