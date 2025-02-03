@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 
 from PIL import Image
+import imagehash
 from mss import mss
 from pygetwindow import getWindowsWithTitle
 
@@ -35,6 +36,7 @@ class ScreenshotTaker:
     stop_screenshots()
         Stops the screenshot capture process.
     """
+
     def __init__(self, session_dir, window_title):
         """
         Initializes the ScreenshotTaker class.
@@ -77,7 +79,9 @@ class ScreenshotTaker:
         Starts capturing screenshots of the specified application window.
 
         Captures screenshots at regular intervals defined by the `interval` attribute and saves them
-        as PNG files in the session directory.
+        as PNG files in the session directory. Additionally, it filters out nearly identical screenshots
+        using perceptual hashing. If the similarity with the previous screenshot is 90% or higher, the new
+        screenshot is skipped.
 
         :raises Exception: If an error occurs during the screenshot capture process, it will be logged.
         """
@@ -85,6 +89,7 @@ class ScreenshotTaker:
             app_logger.info("Starting screenshot capture.")
             self.is_running = True
             self.window_rect = self._get_window_rect()
+            last_hash = None
 
             with mss() as sct:
                 while self.is_running:
@@ -92,9 +97,20 @@ class ScreenshotTaker:
                     screenshot_path = os.path.join(self.session_dir, f"screenshot_{timestamp}.png")
                     screenshot = sct.grab(self.window_rect)
 
-                    # Save screenshot using Pillow
                     image = Image.frombytes("RGB", screenshot.size, screenshot.rgb)
+                    current_hash = imagehash.phash(image)
+
+                    if last_hash is not None:
+                        hash_diff = last_hash - current_hash
+                        max_distance = 64
+                        similarity = (max_distance - hash_diff) / max_distance
+                        if similarity >= 0.9:
+                            app_logger.info("Screenshots are similar. Skipping saving.")
+                            time.sleep(self.interval)
+                            continue
+
                     image.save(screenshot_path)
+                    last_hash = current_hash
 
                     time.sleep(self.interval)
         except Exception as e:

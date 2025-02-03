@@ -7,6 +7,7 @@ from pygetwindow import getWindowsWithTitle
 
 from src.config import DATA_DIRECTORY
 from src.services.audio_recorder import AudioRecorder
+from src.services.merge_media import MergeMedia
 from src.services.screenshot_taker import ScreenshotTaker
 from src.services.video_recorder import VideoRecorder
 from src.utils.logger import app_logger
@@ -132,6 +133,9 @@ class RecorderManager:
             self.video_thread.join()
         if hasattr(self, 'screenshot_thread') and self.screenshot_thread:
             self.screenshot_thread.join()
+
+        merger = MergeMedia(self.session_dir)
+        merger.merge_audio_video()
 
         app_logger.info("Recording stopped.")
 

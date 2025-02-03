@@ -1,3 +1,4 @@
+import torch
 import whisper
 import os
 from src.utils.logger import app_logger
@@ -25,6 +26,7 @@ class SpeechToText:
     save_transcription(transcription, output_path)
         Saves the transcribed text to a file.
     """
+
     def __init__(self):
         """
         Initializes the SpeechToText class by loading the Whisper model.
@@ -36,9 +38,11 @@ class SpeechToText:
         model_size = settings.get('model_size', 'small')
         transcription_language = settings.get('transcription_language', 'pl')
 
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
         try:
-            app_logger.info(f"Loading Whisper model: {model_size}")
-            self.model = whisper.load_model(model_size)
+            app_logger.info(f"Loading Whisper model: {model_size} on device: {device}")
+            self.model = whisper.load_model(model_size, device=device)
             self.transcription_language = transcription_language
             app_logger.info(f"Whisper model loaded successfully with language: {transcription_language}")
         except Exception as e:

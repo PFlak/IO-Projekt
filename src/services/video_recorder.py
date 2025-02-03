@@ -65,8 +65,8 @@ class VideoRecorder:
         try:
             app_logger.info("Starting video recording.")
             self.window_rect = self._get_window_rect()
-            fourcc = cv2.VideoWriter_fourcc(*"XVID")
-            video_path = os.path.join(self.session_dir, "video.avi")
+            fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+            video_path = os.path.join(self.session_dir, "video.mp4")
 
             self.video_writer = cv2.VideoWriter(
                 video_path, fourcc, 20.0,
