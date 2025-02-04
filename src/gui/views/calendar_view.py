@@ -82,7 +82,7 @@ class CalendarView(BaseView):
                 </style>
             </head>
             <body>
-                <iframe src="{self.calendar_url}" style="border: 0" frameborder="0" scrolling="no"></iframe>
+                <iframe src="{self.calendar_url}" style="border: 0;{'filter: invert(1) hue-rotate(180deg);' if self.palette().color(self.backgroundRole()).lightness() < 128 else ''}" frameborder="0" scrolling="no"></iframe>
             </body>
         </html>
         """
