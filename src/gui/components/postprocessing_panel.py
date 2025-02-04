@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QLabel, QWidget, QHBoxLayout
 from PySide6.QtCore import Qt
+from src.managers.postprocessing_manager import postProcessingManager
 
 class PostProcessingPanel(QWidget):
     """
@@ -28,6 +29,8 @@ class PostProcessingPanel(QWidget):
         """
         super().__init__()
         self._setup_ui()
+
+        postProcessingManager.status_changed.connect(self.on_status_changed)
 
     def _setup_ui(self):
         """
@@ -97,6 +100,21 @@ class PostProcessingPanel(QWidget):
         }
         background_color, text_color = color_map.get(status, ("gray", "white"))
         box.setStyleSheet(f"background-color: {background_color}; color: {text_color};")
+
+    def on_status_changed(self, process_name, new_status):
+        """
+        Handles status change signals from PostProcessingManager.
+
+        Parameters:
+        process_name (str): Name of the process that changed.
+        new_status (str): The new status.
+        """
+        if process_name == "recording":
+            self.update_box_status(self.recording_box, new_status)
+        elif process_name == "transcription":
+            self.update_box_status(self.transcription_box, new_status)
+        elif process_name == "notes":
+            self.update_box_status(self.notes_box, new_status)
 
 # Example usage:
 # panel = PostProcessingPanel()

@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QVBoxLayout, QLabel, QComboBox, QPushButton, QWidget, QMessageBox, QLineEdit
 from PySide6.QtCore import Qt, QTimer
 from src.managers.recorder_manager import RecorderManager
+from src.managers.postprocessing_manager import postProcessingManager
 from src.utils.visible_windows import get_visible_window_titles
 
 
@@ -143,6 +144,7 @@ class RecordingPanel(QWidget):
         if not self.is_recording:
             self.recorder_manager = RecorderManager(selected_window)
             self.recorder_manager.start_recording()
+            postProcessingManager.update_status("recording", "started")
             self.is_recording = True
             self.record_button.setText("Stop Recording")
             self.timer_label.show()
@@ -150,6 +152,7 @@ class RecordingPanel(QWidget):
             self.monitor_timer.start(1000)
         else:
             self.stop_recording()
+            postProcessingManager.update_status("recording", "not_started")
 
     def stop_recording(self):
         """
@@ -166,6 +169,8 @@ class RecordingPanel(QWidget):
         self.monitor_timer.stop()
         self.elapsed_time = 0
         self.timer_label.setText("00:00:00")
+        postProcessingManager.update_status('recording', 'finished')
+
 
     def update_timer(self):
         """

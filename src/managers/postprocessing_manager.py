@@ -7,22 +7,23 @@ class PostProcessingManager(QObject):
     Attributes:
         status_changed (Signal): A signal emitted when a status changes.
     """
+    status_changed = Signal(str, str)
 
-    status_changed = Signal(str, str)  # Signal to notify (process_name, new_status)
+    def __init__(self,):
+        super().__init__()
 
-    _status = {
-        "recording": "not_started",
-        "transcription": "not_started",
-        "notes": "not_started",
-    }
 
-    @classmethod
-    def get_status(cls, process_name):
+        self._status = {
+            "recording": "not_started",
+            "transcription": "not_started",
+            "notes": "not_started",
+        }
+
+    def get_status(self, process_name):
         """Returns the current status of a given process."""
-        return cls._status.get(process_name, "not_started")
+        return self._status.get(process_name, "not_started")
 
-    @classmethod
-    def update_status(cls, process_name, status):
+    def update_status(self, process_name, status):
         """
         Updates the status of a process and emits a signal.
 
@@ -30,6 +31,8 @@ class PostProcessingManager(QObject):
         process_name (str): The name of the process to update.
         status (str): The new status ("not_started", "started", "finished", "error").
         """
-        if process_name in cls._status:
-            cls._status[process_name] = status
-            cls.status_changed.emit(process_name, status)
+        if process_name in self._status:
+            self._status[process_name] = status
+            self.status_changed.emit(process_name, status)
+
+postProcessingManager = PostProcessingManager()
