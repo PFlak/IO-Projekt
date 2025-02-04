@@ -137,6 +137,16 @@ class SettingsView(BaseView):
         language_layout.addWidget(self.language_combo)
         content_layout.addLayout(language_layout)
 
+        # OpenAI API Key
+        api_key_layout = QVBoxLayout()
+        api_key_layout.setSpacing(10)
+        api_key_label = QLabel("OpenAI API Key:")
+        self.api_key_input = QLineEdit(settings.get("open_ai_api_key", ""))
+        self.api_key_input.setFixedWidth(input_width)
+        api_key_layout.addWidget(api_key_label)
+        api_key_layout.addWidget(self.api_key_input)
+        content_layout.addLayout(api_key_layout)
+
         # Save Button
         save_button = QPushButton("Save Settings and Restart Application")
         save_button.setFixedWidth(input_width)
@@ -176,6 +186,9 @@ class SettingsView(BaseView):
         pattern = r'^https:\/\/calendar\.google\.com\/calendar\/embed\?.+'
         return re.match(pattern, url) is not None
 
+    def _validate_api_key(self, key):
+        return bool(re.fullmatch(r'^[a-zA-Z0-9-_]+$', key))
+
     def _save_settings(self):
         """
         Saves the current settings and restarts the application.
@@ -188,12 +201,19 @@ class SettingsView(BaseView):
             app_logger.warning("Invalid Google Calendar URL provided.")
             return
 
+        api_key = self.api_key_input.text().strip()
+        if not self._validate_api_key(api_key):
+            QMessageBox.warning(self, "Invalid API Key", "Please provide a valid OpenAI API key.")
+            app_logger.warning("Invalid OpenAI API Key provided.")
+            return
+
         new_settings = {
             "data_directory": self.data_dir_input.text(),
             "max_data_size_gb": self.max_size_spinbox.value(),
             "model_size": self.model_combo.currentText(),
             "transcription_language": self.language_combo.currentData(),
             "calendar_url": self.calendar_url_input.text(),
+            "open_ai_api_key": self.api_key_input.text().strip(),
         }
         update_settings(new_settings)
         QMessageBox.information(self, "Success", "Settings have been saved. The app will now restart.")
