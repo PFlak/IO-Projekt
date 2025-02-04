@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QVBoxLayout, QLabel, QComboBox, QPushButton, QWidget, QMessageBox
+from PySide6.QtWidgets import QVBoxLayout, QLabel, QComboBox, QPushButton, QWidget, QMessageBox, QLineEdit
 from PySide6.QtCore import Qt, QTimer
 from src.managers.recorder_manager import RecorderManager
 from src.utils.visible_windows import get_visible_window_titles
@@ -83,6 +83,12 @@ class RecordingPanel(QWidget):
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
         layout.setSpacing(20)
+
+        self.title_input = QLineEdit()
+        self.title_input.setPlaceholderText("Regular Meeting")
+        self.title_input.setFixedWidth(300)
+        layout.addWidget(QLabel("Meeting Title"), alignment=Qt.AlignCenter)
+        layout.addWidget(self.title_input, alignment=Qt.AlignCenter)
 
         self.window_selector = QComboBox()
         self.window_selector.addItems(self.get_window_titles())
