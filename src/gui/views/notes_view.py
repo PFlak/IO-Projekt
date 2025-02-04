@@ -1,3 +1,4 @@
+import json
 import os
 import random
 from datetime import datetime
@@ -9,6 +10,21 @@ from PySide6.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushBu
 from src.config import DATA_DIRECTORY
 from src.gui.views.base_view import BaseView
 from src.gui.components.note_panel import NotePanel
+
+
+def get_workspace_name(folder_path):
+    """
+    Reads the ws_name from options.json inside the given folder.
+    """
+    options_path = os.path.join(folder_path, "options.json")
+    if os.path.exists(options_path):
+        try:
+            with open(options_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("ws_name", None)
+        except (json.JSONDecodeError, IOError):
+            return None
+    return None
 
 
 class NotesView(BaseView):
@@ -65,9 +81,12 @@ class NotesView(BaseView):
         for folder in sorted(folders, reverse=True):
             formatted_date = self.format_folder_name(folder)
             screenshot_path = self.get_random_screenshot(os.path.join(DATA_DIRECTORY, folder, "screenshots"))
+            workspace_name = get_workspace_name(os.path.join(DATA_DIRECTORY, folder))
+
+            display_name = f"{workspace_name}\n\n{formatted_date}" if workspace_name else formatted_date
 
             if screenshot_path:
-                self.add_note_widget(folder, formatted_date, screenshot_path)
+                self.add_note_widget(folder, display_name, screenshot_path)
 
     def format_folder_name(self, folder_name):
         """
@@ -92,7 +111,7 @@ class NotesView(BaseView):
 
         return os.path.join(screenshots_dir, random.choice(screenshots))
 
-    def add_note_widget(self, folder_name, formatted_date, screenshot_path):
+    def add_note_widget(self, folder_name, display_name, screenshot_path):
         """
         Creates and adds a note widget to the layout.
         """
@@ -114,7 +133,7 @@ class NotesView(BaseView):
         image_label.setPixmap(pixmap)
         image_label.setAlignment(Qt.AlignLeft)
 
-        date_label = QLabel(formatted_date)
+        date_label = QLabel(display_name)
         date_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         date_label.setFont(self.font())
 
