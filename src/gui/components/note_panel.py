@@ -6,10 +6,12 @@ from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtWidgets import (
     QVBoxLayout, QLabel, QWidget, QPushButton, QHBoxLayout, QStackedWidget, QTextEdit,
-    QLineEdit, QSlider, QSizePolicy
+    QLineEdit, QSlider, QSizePolicy, QFileDialog, QMessageBox
 )
 
 from src.config import DATA_DIRECTORY
+from src.gui.views import notes_view
+from src.services.pdf_generator import PDFGenerator
 
 
 class NotePanel(QWidget):
@@ -35,6 +37,7 @@ class NotePanel(QWidget):
         self.return_callback = return_callback
         self.screenshots = []
         self.current_screenshot_index = 0
+        self.ws_name = self.get_workspace_name()
         self._setup_ui()
         self.load_content()
 
@@ -87,12 +90,15 @@ class NotePanel(QWidget):
         self.note_short_button = QPushButton("Short")
         self.note_medium_button = QPushButton("Medium")
         self.note_long_button = QPushButton("Long")
+        self.generate_pdf_button = QPushButton("Generate PDF")
         self.note_short_button.clicked.connect(lambda: self.load_summary("short"))
         self.note_medium_button.clicked.connect(lambda: self.load_summary("medium"))
         self.note_long_button.clicked.connect(lambda: self.load_summary("long"))
+        self.generate_pdf_button.clicked.connect(self.generate_pdf)
         self.summary_buttons_layout.addWidget(self.note_short_button)
         self.summary_buttons_layout.addWidget(self.note_medium_button)
         self.summary_buttons_layout.addWidget(self.note_long_button)
+        self.summary_buttons_layout.addWidget(self.generate_pdf_button)
 
         summary_layout = QVBoxLayout()
         summary_layout.addLayout(self.summary_buttons_layout)
@@ -207,6 +213,22 @@ class NotePanel(QWidget):
             self.summary_text.setMarkdown(md_text)
         else:
             self.summary_text.setPlainText("No summary available for selected mode")
+
+    def get_workspace_name(self):
+        """
+        Retrieves the workspace name.
+        """
+        return notes_view.get_workspace_name(os.path.join(DATA_DIRECTORY, self.folder_name))
+
+    def generate_pdf(self):
+        """Prompts the user to select a save location and generates the PDF."""
+        save_path, _ = QFileDialog.getSaveFileName(self, "Save PDF", f"{self.ws_name}_notes.pdf", "PDF Files (*.pdf)")
+        if save_path:
+            success = PDFGenerator.generate_notes_pdf(self.ws_name, self.folder_name, save_path)
+            if success:
+                QMessageBox.information(self, "Success", f"PDF saved successfully:\n{save_path}")
+            else:
+                QMessageBox.warning(self, "Error", "Failed to generate PDF.")
 
     def adjust_screenshot_size(self):
         """Adjusts the screenshot size to maintain aspect ratio."""

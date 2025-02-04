@@ -32,16 +32,18 @@ class PDFGenerator:
                 return 'Helvetica', 'Helvetica-Bold'  # ReportLab's built-in fallback
 
     @staticmethod
-    def generate_notes_pdf(ws_name: str):
+    def generate_notes_pdf(ws_name: str, folder_name: str, save_path: str):
         """
         Generates a PDF file for the specified workspace with notes in separate sections.
         
         Args:
-            ws_name (str): Name of the workspace to process
+            :param ws_name: Name of the workspace to process
+            :param folder_name: Name of the folder to process
+            :param save_path: Path to save the PDF file
         """
-        ws_path = os.path.join(DATA_DIRECTORY, ws_name)
+        ws_path = os.path.join(DATA_DIRECTORY, folder_name)
         options_path = os.path.join(ws_path, 'options.json')
-        output_path = os.path.join(ws_path, f"{ws_name}_notes.pdf")
+        output_path = os.path.join(save_path)
 
         # Configure fonts
         font_normal, font_bold = PDFGenerator._setup_fonts()
