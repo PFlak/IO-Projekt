@@ -8,13 +8,14 @@ from PySide6.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushBu
 
 from src.config import DATA_DIRECTORY
 from src.gui.views.base_view import BaseView
+from src.gui.components.note_panel import NotePanel
 
 
 class NotesView(BaseView):
     def __init__(self):
         super().__init__("Notes")
         self._setup_ui()
-        self.load_notes()
+        self.note_panel = None
 
     def _setup_ui(self):
         """
@@ -66,7 +67,7 @@ class NotesView(BaseView):
             screenshot_path = self.get_random_screenshot(os.path.join(DATA_DIRECTORY, folder, "screenshots"))
 
             if screenshot_path:
-                self.add_note_widget(formatted_date, screenshot_path)
+                self.add_note_widget(folder, formatted_date, screenshot_path)
 
     def format_folder_name(self, folder_name):
         """
@@ -91,7 +92,7 @@ class NotesView(BaseView):
 
         return os.path.join(screenshots_dir, random.choice(screenshots))
 
-    def add_note_widget(self, formatted_date, screenshot_path):
+    def add_note_widget(self, folder_name, formatted_date, screenshot_path):
         """
         Creates and adds a note widget to the layout.
         """
@@ -123,4 +124,23 @@ class NotesView(BaseView):
         note_widget.setLayout(layout)
 
         note_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        note_widget.clicked.connect(lambda: self.show_note_panel(folder_name))
         self.notes_container.addWidget(note_widget, alignment=Qt.AlignCenter)
+
+    def show_note_panel(self, folder_name):
+        """
+        Displays the NotePanel for the selected note folder, hiding the list view.
+        """
+        if self.note_panel:
+            self.note_panel.deleteLater()
+
+        self.note_panel = NotePanel(folder_name, self.return_to_notes_view)
+        self.layout.addWidget(self.note_panel)
+        self.scroll_area.hide()
+
+    def return_to_notes_view(self):
+        """Hides the NotePanel and shows the list of notes again."""
+        if self.note_panel:
+            self.note_panel.deleteLater()
+            self.note_panel = None
+        self.scroll_area.show()
