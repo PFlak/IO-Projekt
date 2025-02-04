@@ -18,4 +18,4 @@ class BaseView(QWidget):
         self.layout.addWidget(label)
 
         # Font
-        self.setFont(QFont("Consolas", 10))
+        self.setFont(QFont("Consolas", 11))
